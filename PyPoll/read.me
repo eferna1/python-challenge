@@ -1,0 +1,65 @@
+Python-Challenge - PyPoll
+import os
+import csv
+
+# Path to collect data from the Resources folder
+election_csv = os.path.join("Resources", "election_data.csv")
+
+# keep track of list for votes & % of votes, as well as count ballots 
+total_ballots = 0
+votes = {}
+percent_votes = {}
+winner = ""
+winner_count = 0
+
+# Read CSV file with comma as the delimiter & headers
+with open(election_csv) as csv_file:
+    csv_reader = csv.reader(csv_file, delimiter=",")
+    
+    # Reading the header row 
+    csv_header = next(csv_reader)
+    
+    # Create for loop to find total votes
+    for row in csv_reader:
+        
+        # Append to find total votes in ballot ID
+        total_ballots = total_ballots + 1
+        
+        #locate the candidate
+        candidate = row[2]
+        if candidate not in votes: 
+            votes[row[2]] = 1
+        else: 
+            votes[row[2]] += 1
+        
+        for key, value in votes.items(): 
+            percent_votes[key] = round((value/total_ballots)* 100 , 3)
+            
+            if votes[key] > winner_count:
+                winner_count = votes[key]
+                winner = key            
+            
+#Print "Election Results"
+print(f"Election Results")
+print(f"____________________________\n")
+print(f"Total Votes: {total_ballots}")
+print(f"____________________________\n")
+for key, value in votes.items():
+    print(key, ':' , (str(percent_votes[key])+"%"), ' ' , (votes[key]))
+print(f"____________________________\n")
+print(f"Winner:", winner)
+
+# Specify the file to write to
+output_file = os.path.join("analysis", "Election Results.txt")
+
+# Open the file using "write" mode.  
+with open(output_file, 'w') as text:
+    text.write(f"Election Results\n")
+    text.write(f"____________________________\n")
+    text.write(f"Total Votes: {total_ballots}\n")
+    text.write(f"____________________________\n")
+    for key, value in votes.items():
+        text.write(f"{key}: {str(percent_votes[key])}% ({votes[key]})\n")
+    text.write(f"____________________________\n")
+    text.write(f"Winner:, {winner}\n")
+    text.write(f"____________________________\n")
